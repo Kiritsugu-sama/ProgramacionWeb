@@ -3,8 +3,6 @@ import { ScrollView, Text, StyleSheet, TextInput, Button, Alert, useColorScheme 
 import { TextInputMask } from "react-native-masked-text";
 
 export default function RegistrationScreen() {
-    const colorScheme = useColorScheme();
-    
     const [formulario, setFormulario] = useState({
         nombre: '',
         edad: ''
@@ -21,17 +19,19 @@ export default function RegistrationScreen() {
         if (!formulario.nombre.trim()) erroresTemp.nombre = 'El nombre es obligatorio';
         if (!formulario.edad.trim() || formulario.edad.trim() === "0") erroresTemp.edad = 'Edad obligatoria';
         
-        setErrores(erroresTemp);
+        return erroresTemp;
     };
 
     const manejarCambio = (campo: string, valor: string) => {
-        setFormulario((prevFormulario) => ({
+         setFormulario((prevFormulario) => ({
             ...prevFormulario,
             [campo]: valor,
         }));
     };
-    const manejarDatos = () => {
-        validarFormulario();
+
+    const manejarDatos =  () => {
+        var errores = validarFormulario();
+        setErrores(errores);
         if (Object.keys(errores).length===0){
             Alert.alert('Usuario', "Hola, " + formulario.nombre + ". Tienes " + formulario.edad + " años.");
         }else{
