@@ -1,19 +1,13 @@
+import { translations } from "@/utils/transalations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18n } from "i18n-js"
 import { createContext, useContext, useEffect, useState } from "react";
 
-const translations = {
-    fr: { welcome: "Bienvenue" },
-    es: { welcome: "Bienvenido", login: "Ingresar" },
-    de: { welcome: "Wilkommen" },
-    en: { welcome: "Welcome" },
-}
-
 const i18n = new I18n(translations);
-i18n.defaultLocale = "fr";
+i18n.defaultLocale = "es";
 i18n.enableFallback = true;
 
-type Language = "en" | "es" | "fr" | "de";
+type Language = "en" | "es";
 
 interface LanguageContextProps {
     language: Language;
@@ -29,7 +23,7 @@ export const useLanguage = () => {
 }
 
 export const LanguageProvider=({ children }: { children: React.ReactNode }) => {
-    const [language, setLanguage] = useState<Language>("de");
+    const [language, setLanguage] = useState<Language>("es");
     useEffect(() => {
 
         const loadLanguage = async () => {

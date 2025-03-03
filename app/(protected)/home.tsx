@@ -22,44 +22,9 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Ionicons name="home-outline" size={100} color="#3A4750" style={styles.iconMain} />
 
-      <Text style={styles.welcomeText}>¡Hola, {user?.email || "Usuario"}!</Text>
-      <Text style={styles.subText}>Bienvenido a tu panel de control</Text>
+      <Text style={styles.welcomeText}>¡Hola, {user?.nombreCompleto || "Usuario"}!</Text>
+      <Text style={styles.subText}>Bienvenido a gymtask!</Text>
 
-      <Animated.View style={[styles.animatedView, { transform: [{ scale }] }]}>
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => router.push("/tabs/profile")}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-        >
-          <Ionicons name="person-outline" size={28} color="white" />
-          <Text style={styles.buttonText}>Perfil</Text>
-        </TouchableOpacity>
-      </Animated.View>
-
-      <Animated.View style={[styles.animatedView, { transform: [{ scale }] }]}>
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => router.push("/inventory/inventory")}
-          onPressIn={handlePressOut}
-          onPressOut={handlePressOut}
-        >
-          <Ionicons name="cube-outline" size={28} color="white" />
-          <Text style={styles.buttonText}>Inventario</Text>
-        </TouchableOpacity>
-      </Animated.View>
-
-      <Animated.View style={[styles.animatedView, { transform: [{ scale }] }]}>
-        <TouchableOpacity 
-          style={styles.logoutButton} 
-          onPress={() => { logout(); router.replace("/login"); }}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-        >
-          <Ionicons name="log-out-outline" size={28} color="white" />
-          <Text style={styles.buttonText}>Cerrar Sesión</Text>
-        </TouchableOpacity>
-      </Animated.View>
     </View>
   );
 }
