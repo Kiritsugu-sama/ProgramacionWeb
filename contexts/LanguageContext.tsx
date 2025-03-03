@@ -7,7 +7,7 @@ const i18n = new I18n(translations);
 i18n.defaultLocale = "es";
 i18n.enableFallback = true;
 
-type Language = "en" | "es";
+export type Language = "en" | "es";
 
 interface LanguageContextProps {
     language: Language;
