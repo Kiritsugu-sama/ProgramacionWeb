@@ -1,60 +1,104 @@
-import { createContext, isValidElement, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 type User = {
-    email: string;
-    nombreCompleto: string;
-    edad: number;
-    sexo: string;
-    estadoCivil: string;
+  email: string;
+  nombreCompleto: string;
+  edad: number;
+  sexo: string;
+  estadoCivil: string;
+  token: string;
 } | null;
 
 const AuthContext = createContext<{
-    user: User,
-    isAllowed: boolean;
-    login: (email: string) => void;
-    logout: () => void;
+  user: User;
+  isAllowed: boolean;
+  login: (email: string) => Promise<void>;
+  logout: () => Promise<void>;
+  token: string | null;
 } | null>(null);
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) throw new Error ("useAuth debe usarse dentro de AuthProvider");
-    return context;
-}
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");
+  return context;
+};
 
-export const AuthProvider = ({children}: {children: React.ReactNode}) => {
-    const [user, setUser] = useState<User>(null);
-    const [isAllowed, setIsAllowed] = useState<boolean>(false);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User>(null);
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
-    const login =  (email: string) => {
-        const isValidEmail = email.endsWith('.edu');
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          const parsedUser: User = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setToken(parsedUser?.token ?? null);
+          setIsAllowed(true);
+          router.replace("/home");
+        }
+      } catch (error) {
+        console.error("Error cargando el usuario desde AsyncStorage", error);
+      }
+    };
 
-        const usuario: User = {
+    loadUser();
+  }, []);
+
+  const login = async (email: string) => {
+    try {
+      const isValidEmail = email.endsWith(".edu");
+
+      if (!isValidEmail) {
+        alert("Solo correos .edu pueden ingresar");
+        return;
+      }
+
+      const fakeToken = "123456789abcdef";
+      const usuario: User = {
         email,
         nombreCompleto: "Alvaro Reyes",
         edad: 23,
         sexo: "Masculino",
-        estadoCivil: "Soltero"
-        };
-          
-        if (isValidEmail){
-            setUser(usuario);
-            setIsAllowed(true);
-        }else{
-            setUser(null);
-            setIsAllowed(false);
-            alert("Solo correos .edu pueden ingresar")
-        }
-    };
+        estadoCivil: "Soltero",
+        token: fakeToken,
+      };
 
-    const logout = () => {
-        setUser(null);
-        setIsAllowed(false);
+      await AsyncStorage.setItem("user", JSON.stringify(usuario));
+
+      setUser(usuario);
+      setToken(fakeToken);
+      setIsAllowed(true);
+
+      router.replace("/home");
+    } catch (error) {
+      console.error("Error en el login con AsyncStorage", error);
     }
+  };
 
-    return (
-        <AuthContext.Provider value={{user, isAllowed, login, logout}}>
-            {children}
-        </AuthContext.Provider>
-    )
-   
-}
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem("user");
+
+      setUser(null);
+      setToken(null);
+      setIsAllowed(false);
+
+      // Redirigir a la pantalla de login
+      router.replace("/login");
+    } catch (error) {
+      console.error("Error en el logout con AsyncStorage", error);
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, isAllowed, login, logout, token }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

@@ -93,7 +93,7 @@ export default function LoginScreen() {
 
               <TouchableOpacity 
                 style={styles.button} 
-                onPress={() => { login(email); router.replace("/home"); }}
+                onPress={() => { login(email); }}
               >
                 <Text style={styles.buttonText}>
                   {i18n.t(defaultTranslations.login_login)}
