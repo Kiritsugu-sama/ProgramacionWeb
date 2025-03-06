@@ -1,13 +1,33 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function ProtectedLayout() {
-    const { isAllowed } = useAuth();
-    if (!isAllowed) return <Redirect href="/login" />;
+    const { token } = useAuth();
+    const { theme } = useTheme();
+
+    if (!token) return <Redirect href="/login" />;
+
+    // Definir colores según el tema
+    const isDark = theme === "dark";
+    const activeColor = isDark ? "#BB86FC" : "blue";
+    const inactiveColor = isDark ? "#888" : "gray";
+    const backgroundColor = isDark ? "#121212" : "#fff";
+    const tabBarStyle = {
+        backgroundColor,
+        borderTopWidth: 0,
+    };
 
     return (
-        <Tabs screenOptions={{ tabBarActiveTintColor: "blue", tabBarInactiveTintColor: "gray", headerShown: false }}>
+        <Tabs
+            screenOptions={{
+                tabBarActiveTintColor: activeColor,
+                tabBarInactiveTintColor: inactiveColor,
+                headerShown: false,
+                tabBarStyle,
+            }}
+        >
             <Tabs.Screen
                 name="home"
                 options={{

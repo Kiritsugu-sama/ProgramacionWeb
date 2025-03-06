@@ -1,16 +1,28 @@
 import { LoginTranslations, loginTranslations as loginEsEn, defaultLoginTranslations } from './dictionary/login';
+import { HomeTranslations, homeTranslations as homeEsEn, defaultHomeTranslations } from './dictionary/home';
+import { SettingsTranslations, settingsTranslations as settingsEsEn, defaultSettingsTranslations } from './dictionary/settings';
+import { ProfileTranslations, profileTranslations as profileEsEn, defaultProfileTranslations } from './dictionary/profile';
 
-export interface TranslationsType extends LoginTranslations {}
+export interface TranslationsType extends LoginTranslations, HomeTranslations, SettingsTranslations, ProfileTranslations {}
 
 export const defaultTranslations: TranslationsType = {
   ...defaultLoginTranslations,
+  ...defaultHomeTranslations,
+  ...defaultSettingsTranslations,
+  ...defaultProfileTranslations,
 };
 
 export const translations: Record<'es' | 'en', TranslationsType> = {
   es: {
-    ...loginEsEn.es
+    ...loginEsEn.es,
+    ...homeEsEn.es,
+    ...settingsEsEn.es,
+    ...profileEsEn.es,
   },
   en: {
     ...loginEsEn.en,
+    ...homeEsEn.en,
+    ...settingsEsEn.en,
+    ...profileEsEn.en,
   },
 };

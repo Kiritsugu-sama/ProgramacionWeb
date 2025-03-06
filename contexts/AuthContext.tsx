@@ -13,7 +13,6 @@ type User = {
 
 const AuthContext = createContext<{
   user: User;
-  isAllowed: boolean;
   login: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   token: string | null;
@@ -27,7 +26,6 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>(null);
-  const [isAllowed, setIsAllowed] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
 
@@ -39,7 +37,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const parsedUser: User = JSON.parse(storedUser);
           setUser(parsedUser);
           setToken(parsedUser?.token ?? null);
-          setIsAllowed(true);
           router.replace("/home");
         }
       } catch (error) {
@@ -73,7 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setUser(usuario);
       setToken(fakeToken);
-      setIsAllowed(true);
 
       router.replace("/home");
     } catch (error) {
@@ -87,7 +83,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setUser(null);
       setToken(null);
-      setIsAllowed(false);
 
       // Redirigir a la pantalla de login
       router.replace("/login");
@@ -97,7 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAllowed, login, logout, token }}>
+    <AuthContext.Provider value={{ user, login, logout, token }}>
       {children}
     </AuthContext.Provider>
   );

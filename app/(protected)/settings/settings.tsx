@@ -4,6 +4,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import React from 'react';
 import { View, Text, Switch, Pressable, StyleSheet } from 'react-native';
 import ProfileScreen from './componentes/profile';
+import { i18n } from "@/contexts/LanguageContext";
+import { defaultTranslations } from "@/utils/transalations";
 
 const SettingsScreen = () => {
   const { language, changeLanguage } = useLanguage();
@@ -16,10 +18,12 @@ const SettingsScreen = () => {
       <ProfileScreen />
 
       <Text style={{ color: isDark ? '#fff' : '#000', fontSize: 20, marginBottom: 10 }}>
-        Configuraciones
+        {i18n.t(defaultTranslations.settings_title)}
       </Text>
 
-      <Text style={{ color: isDark ? '#fff' : '#000', marginBottom: 5 }}>Idioma:</Text>
+      <Text style={{ color: isDark ? '#fff' : '#000', marginBottom: 5 }}>
+        {i18n.t(defaultTranslations.settings_language)}
+      </Text>
       <View style={[styles.segmentedControl, { borderColor: isDark ? "#fff" : "#aaa" }]}>
         {['es', 'en'].map((lang, index) => (
           <Pressable
@@ -40,12 +44,14 @@ const SettingsScreen = () => {
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }}>
-        <Text style={{ color: isDark ? '#fff' : '#000', marginRight: 10 }}>Modo Oscuro</Text>
+        <Text style={{ color: isDark ? '#fff' : '#000', marginRight: 10 }}>
+          {i18n.t(defaultTranslations.settings_darkMode)}
+        </Text>
         <Switch value={isDark} onValueChange={toggleTheme} />
       </View>
 
       <Pressable style={styles.logoutButton} onPress={logout}>
-        <Text style={styles.logoutText}>Cerrar Sesión</Text>
+        <Text style={styles.logoutText}>{i18n.t(defaultTranslations.settings_logout)}</Text>
       </Pressable>
     </View>
   );

@@ -2,16 +2,18 @@ import React, { useRef, useEffect } from "react";
 import { View, Text, Image, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext"; // Usa el tema
+import { useTheme } from "@/contexts/ThemeContext";
 import { Redirect } from "expo-router";
 import { StyleSheet } from "react-native";
+import { i18n } from "@/contexts/LanguageContext";
+import { defaultTranslations } from "@/utils/transalations";
 
 export default function ProfileScreen() {
-  const { user, isAllowed } = useAuth();
-  const { theme } = useTheme(); // Obtiene el tema actual
-  const styles = theme === "dark" ? darkTheme : lightTheme; // Selecciona el estilo correcto
+  const { user, token } = useAuth();
+  const { theme } = useTheme();
+  const styles = theme === "dark" ? darkTheme : lightTheme;
 
-  if (!isAllowed) return <Redirect href="/login" />;
+  if (!token) return <Redirect href="/login" />;
 
   const rowAnims = Array.from({ length: 5 }, () => useRef(new Animated.Value(0)).current);
 
@@ -29,28 +31,31 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={require("@assets/images/Alvaro.jpg")} style={styles.avatar} />
-        <Text style={styles.title}>Perfil de {user?.nombreCompleto}</Text>
+        <Text style={styles.title}>
+          {i18n.t(defaultTranslations.profile_title)}
+        </Text>
+
       </View>
       <View style={styles.body}>
         <Animated.View style={[styles.infoRow, getRowStyle(rowAnims[0])]}>
           <Ionicons name="mail-outline" size={20} style={styles.infoIcon} />
-          <Text style={styles.infoText}>{user?.email}</Text>
+          <Text style={styles.infoText}>{i18n.t(defaultTranslations.profile_email)}: {user?.email}</Text>
         </Animated.View>
         <Animated.View style={[styles.infoRow, getRowStyle(rowAnims[1])]}>
           <Ionicons name="person-outline" size={20} style={styles.infoIcon} />
-          <Text style={styles.infoText}>{user?.nombreCompleto}</Text>
+          <Text style={styles.infoText}>{i18n.t(defaultTranslations.profile_fullName)}: {user?.nombreCompleto}</Text>
         </Animated.View>
         <Animated.View style={[styles.infoRow, getRowStyle(rowAnims[2])]}>
           <Ionicons name="calendar-outline" size={20} style={styles.infoIcon} />
-          <Text style={styles.infoText}>{user?.edad} años</Text>
+          <Text style={styles.infoText}>{i18n.t(defaultTranslations.profile_age)}: {user?.edad} años</Text>
         </Animated.View>
         <Animated.View style={[styles.infoRow, getRowStyle(rowAnims[3])]}>
           <Ionicons name="male-female-outline" size={20} style={styles.infoIcon} />
-          <Text style={styles.infoText}>{user?.sexo}</Text>
+          <Text style={styles.infoText}>{i18n.t(defaultTranslations.profile_gender)}: {user?.sexo}</Text>
         </Animated.View>
         <Animated.View style={[styles.infoRow, getRowStyle(rowAnims[4])]}>
           <Ionicons name="heart-outline" size={20} style={styles.infoIcon} />
-          <Text style={styles.infoText}>{user?.estadoCivil}</Text>
+          <Text style={styles.infoText}>{i18n.t(defaultTranslations.profile_maritalStatus)}: {user?.estadoCivil}</Text>
         </Animated.View>
       </View>
     </View>
