@@ -4,9 +4,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/contexts/ThemeContext";
 import { i18n } from "@/contexts/LanguageContext";
 import { defaultTranslations } from "@/utils/transalations";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function HomeScreen() {
-  const { user } = useAuth();
+  const user = useSelector((state: RootState) => state.user);
   const { theme } = useTheme();
   const styles = theme === "dark" ? darkTheme : lightTheme; 
 

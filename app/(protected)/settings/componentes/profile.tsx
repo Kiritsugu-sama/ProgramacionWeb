@@ -7,13 +7,15 @@ import { Redirect } from "expo-router";
 import { StyleSheet } from "react-native";
 import { i18n } from "@/contexts/LanguageContext";
 import { defaultTranslations } from "@/utils/transalations";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function ProfileScreen() {
-  const { user, token } = useAuth();
+  const user = useSelector((state: RootState) => state.user);
   const { theme } = useTheme();
   const styles = theme === "dark" ? darkTheme : lightTheme;
 
-  if (!token) return <Redirect href="/login" />;
+  if (!user.token) return <Redirect href="/login" />;
 
   const rowAnims = Array.from({ length: 5 }, () => useRef(new Animated.Value(0)).current);
 

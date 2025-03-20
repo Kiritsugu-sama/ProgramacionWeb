@@ -1,21 +1,12 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// contexts/AuthContext.tsx
+import { createContext, useContext } from "react";
+import { useDispatch } from "react-redux";
+import { setUserData, clearUserData } from "@/store/slices/userSlice";
 import { useRouter } from "expo-router";
 
-type User = {
-  email: string;
-  nombreCompleto: string;
-  edad: number;
-  sexo: string;
-  estadoCivil: string;
-  token: string;
-} | null;
-
 const AuthContext = createContext<{
-  user: User;
   login: (email: string) => Promise<void>;
   logout: () => Promise<void>;
-  token: string | null;
 } | null>(null);
 
 export const useAuth = () => {
@@ -25,74 +16,37 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const storedUser = await AsyncStorage.getItem("user");
-        if (storedUser) {
-          const parsedUser: User = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setToken(parsedUser?.token ?? null);
-          router.replace("/home");
-        }
-      } catch (error) {
-        console.error("Error cargando el usuario desde AsyncStorage", error);
-      }
+  const login = async (email: string) => {
+    if (!email.endsWith(".edu")) {
+      alert("Solo correos .edu pueden ingresar");
+      return;
+    }
+
+    const fakeToken = "123456789abcdef";
+    const usuario = {
+      email,
+      nombreCompleto: "Alvaro Reyes",
+      edad: 23,
+      sexo: "Masculino",
+      estadoCivil: "Soltero",
+      token: fakeToken,
     };
 
-    loadUser();
-  }, []);
+    dispatch(setUserData(usuario));
 
-  const login = async (email: string) => {
-    try {
-      const isValidEmail = email.endsWith(".edu");
-
-      if (!isValidEmail) {
-        alert("Solo correos .edu pueden ingresar");
-        return;
-      }
-
-      const fakeToken = "123456789abcdef";
-      const usuario: User = {
-        email,
-        nombreCompleto: "Alvaro Reyes",
-        edad: 23,
-        sexo: "Masculino",
-        estadoCivil: "Soltero",
-        token: fakeToken,
-      };
-
-      await AsyncStorage.setItem("user", JSON.stringify(usuario));
-
-      setUser(usuario);
-      setToken(fakeToken);
-
-      router.replace("/home");
-    } catch (error) {
-      console.error("Error en el login con AsyncStorage", error);
-    }
+    router.replace("/home");
   };
 
   const logout = async () => {
-    try {
-      await AsyncStorage.removeItem("user");
-
-      setUser(null);
-      setToken(null);
-
-      // Redirigir a la pantalla de login
-      router.replace("/login");
-    } catch (error) {
-      console.error("Error en el logout con AsyncStorage", error);
-    }
+    dispatch(clearUserData());
+    router.replace("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, token }}>
+    <AuthContext.Provider value={{ login, logout }}>
       {children}
     </AuthContext.Provider>
   );

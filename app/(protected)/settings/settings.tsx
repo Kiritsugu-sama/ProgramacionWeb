@@ -10,8 +10,9 @@ import { defaultTranslations } from "@/utils/transalations";
 const SettingsScreen = () => {
   const { language, changeLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
   const isDark = theme === 'dark';
+
+  const { logout } = useAuth();
 
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor: isDark ? '#222' : '#fff' }}>

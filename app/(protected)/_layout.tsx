@@ -2,14 +2,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function ProtectedLayout() {
-    const { token } = useAuth();
+    const user = useSelector((state: RootState) => state.user);
     const { theme } = useTheme();
+    const { language } = useLanguage();
 
-    if (!token) return <Redirect href="/login" />;
-
-    // Definir colores según el tema
+    if (!user.token) return <Redirect href="/login" />;
+    
     const isDark = theme === "dark";
     const activeColor = isDark ? "#BB86FC" : "blue";
     const inactiveColor = isDark ? "#888" : "gray";
@@ -44,6 +47,20 @@ export default function ProtectedLayout() {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="rutina"
+                options={{
+                    tabBarLabel: language === "es" ? "Rutina" : "Routine",
+                    tabBarIcon: ({ focused, color, size }) => (
+                    <Ionicons
+                        name={focused ? "barbell" : "barbell-outline"}
+                        size={size}
+                        color={color}
+                    />
+                    ),
+                }}
+            />
+
         </Tabs>
     );
 }
